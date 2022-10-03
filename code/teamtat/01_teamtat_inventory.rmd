@@ -65,8 +65,7 @@ note_status <- tibble(
   note_id= character(),
   class_count = integer(),
   instance_count= integer(),
-  class= character(),
-  raw_text= character())
+  class= character())
 
 # loop through annotations
 for(i in 1:file_count) {
@@ -98,15 +97,11 @@ instance_count=feed_notes %>%
 # class
 class=note[[1]]
 
-# raw_text
-raw_text=paste(note[[2]],sep="#")
-
 # import to tibble
 note_status[i,1]=note_id
 note_status[i,2]=class_count
 note_status[i,3]=instance_count 
 note_status[i,4]=class
-note_status[i,5]=raw_text
 
 
 }
