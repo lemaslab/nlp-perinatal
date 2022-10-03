@@ -108,7 +108,7 @@ note_status[i,4]=class
 
 # output
 note_final= note_status %>%
-  mutate(project="Project_1.2_v5") %>%
+  mutate(project="10_2022") %>%
   select(note_id,project,everything())
 
 # file name
