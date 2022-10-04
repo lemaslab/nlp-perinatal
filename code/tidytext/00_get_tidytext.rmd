@@ -51,10 +51,13 @@ library(forcats)
 
 # DIRECTORY WITH FILES
 
-files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v0/rdata/", 
+files <- list.files(path="~/nlp-perinatal/data/rda/", 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
+```
+
+```{r, warning=FALSE, echo=FALSE}
 
 # extract annotations
 file_count=length(files)
@@ -97,7 +100,7 @@ feeding[i,3]=notes
 
 # file name
 file_name="feeding_nlp.rda"
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v0/tidy/") 
+data_directory=paste0("~/nlp-perinatal/data//tidy/") 
 data_path=paste0(data_directory,file_name)
 
 # export

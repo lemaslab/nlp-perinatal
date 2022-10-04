@@ -52,10 +52,14 @@ library(forcats)
 
 # DIRECTORY WITH FILES
 
-files <- list.files(path="~/mombaby-ehr-nlp/data/processed/tidy/", 
+files <- list.files(path="~/nlp-perinatal/data/tidy/", 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
 
 file_index=files
 
