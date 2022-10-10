@@ -100,7 +100,7 @@ feeding[i,3]=notes
 
 # file name
 file_name="feeding_nlp.rda"
-data_directory=paste0("~/nlp-perinatal/data//tidy/") 
+data_directory=paste0("~/nlp-perinatal/data/tidy/") 
 data_path=paste0(data_directory,file_name)
 
 # export
