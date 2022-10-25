@@ -1,7 +1,7 @@
 ---
-title: "teamtat- inventory"
+title: "teamtat- output"
 author: "Dominick J. Lemas"
-date: "11/01/2021"
+date: "10/25/2022"
 output: html_document
 
 ---
@@ -14,7 +14,7 @@ output: html_document
 
 # Author:            Dominick J. Lemas 
 # Start Date:        October 03, 2022 
-# Last Modified:      
+# Last Modified:     October 25, 2022 
 # Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
 # IRB Study:         IRB Study #IRB201601899
 # version: R version 4.2.1 (2022-06-23 ucrt) 
@@ -24,8 +24,7 @@ output: html_document
 # ***************                Objective                     *************** #
 # **************************************************************************** #
 
-#  (1) Identify annotations that need revision. 
-#  (2) Create file for downstream NLP analysis. 
+#  (1) Create file for downstream NLP analysis. 
 
 ```
 
@@ -57,6 +56,9 @@ files <- list.files(path="~/nlp-perinatal/data/rda/",
 
 ```{r, warning=FALSE, echo=FALSE}
 
+# CLASSIFICATION 
+
+
 # extract annotations
 file_count=length(files)
 
@@ -78,7 +80,7 @@ file_index=files[[i]]
 # import data
 load(file=file_index) 
 
-# feed_notes
+# note-id
 feed_notes=note[[3]] %>%
   mutate(class=as.factor(class),
          class_total=length(class))
@@ -104,24 +106,82 @@ note_status[i,3]=instance_count
 note_status[i,4]=class
 
 
-}
+}  # END FUNCTION
 
-# output
-note_final= note_status %>%
-  mutate(project="10_2022") %>%
-  select(note_id,project,everything())
+# create part and note ids
+note_status_tmp=note_status %>%
+  mutate(note_id_tmp=note_id,
+         note_id_tmp2=note_id) %>%
+  separate(note_id_tmp,sep="_",c(NA, "part_id",NA,NA)) %>%
+  separate(note_id_tmp2,sep="_",c(NA,NA,NA,"note_number"))
+
+# class output
+note_class= note_status_tmp %>%
+  mutate(data_version="10_2022") %>%
+  select(part_id,note_number,note_id,data_version,class)
 
 # file name
-file_name=paste0(note_final$project[1],".csv")
+file_name=paste0("infantfeed_class_",note_final$data_version[1],".csv")
 data_directory=paste0("~/nlp-perinatal/data/processed/") 
 data_path=paste0(data_directory,file_name)
 
 # export
-  write_tsv(note_final, path=data_path, col_names=TRUE)
+  write_tsv(note_class, path=data_path, col_names=TRUE)
 
-# END FUNCTION
+# END CODE BLOCK
                               
 ```
 
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# RAW TEXT
+
+# extract annotations
+file_count=length(files)
+
+# create empty tibble() for data
+note_raw <- tibble(
+  note_id= character(),
+  note_text= character())
+
+# loop through annotations
+for(i in 1:file_count) {
+
+# loop through each annotation`
+file_index=files[[i]]
+
+# EXTRACT DATA FROM RDA
+
+# import data
+load(file=file_index) 
+
+# note-id
+feed_notes=note[[3]] %>%
+  mutate(class=as.factor(class),
+         class_total=length(class))
+note_id=unique(feed_notes$note_id)
+
+# note-text
+raw=note[[2]]
+
+# import to tibble
+note_raw[i,1]=note_id
+note_raw[i,2]=raw
+
+
+}  # END FUNCTION
+
+# file name
+file_name=paste0("infantfeed_text_10_2022.csv")
+data_directory=paste0("~/nlp-perinatal/data/processed/") 
+data_path=paste0(data_directory,file_name)
+
+# export
+  write_tsv(note_raw, path=data_path, col_names=TRUE)
+
+# END CODE BLOCK
+```
 
 
