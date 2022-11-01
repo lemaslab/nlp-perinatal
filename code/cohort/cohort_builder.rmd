@@ -94,11 +94,41 @@ birth_codes=left_join(births, codes) %>%
   mutate(days2birth=as.double(difftime(code_date,dob,units ="days"))) %>%
   select(deidentified_mom_id,deidentified_baby_id,dob,code_date,days2birth,everything())
 
-# Export Data Files (sharedrive)
-file_name=paste0("births_selfharm.rda")
-selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
-data_path=paste0(selfharm_directory,file_name)
+```
 
-# export
-save(birth_codes, file=data_path)
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Export Data
+# **************************************************************************** #
+
+# Export Data Files (sharedrive/ RDA)
+#------------------------------------
+file_name_rda=paste0("births_selfharm.rda")
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_rda=paste0(selfharm_directory,file_name_rda)
+save(birth_codes, file=data_path_rda)
+
+# Export Data Files (sharedrive/ CSV)
+#------------------------------------
+file_name_csv=paste0("births_selfharm.csv")
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_csv=paste0(selfharm_directory,file_name_csv)
+write_tsv(birth_codes, path=data_path_csv, col_names=TRUE)
+
+# Export Data Files (local/ RDA)
+#------------------------------------
+file_name_rda=paste0("births_selfharm.rda")
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_rda=paste0(selfharm_directory,file_name_rda)
+save(birth_codes, file=data_path_rda)
+
+# Export Data Files (local/ CSV)
+#------------------------------------
+file_name_csv=paste0("births_selfharm.csv")
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_csv=paste0(selfharm_directory,file_name_csv)
+write_tsv(birth_codes, path=data_path_csv, col_names=TRUE)
+
+
 ```
