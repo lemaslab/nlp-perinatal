@@ -45,9 +45,14 @@ library(stringr)
 
 ```{r, warning=FALSE, echo=FALSE}
 
-# DIRECTORY WITH FILES
+# DIRECTORY WITH FILES (LOCAL)
 
-files <- list.files(path="~/nlp-perinatal/data/xml/", 
+# files <- list.files(path="~/nlp-perinatal/data/xml/", 
+#                     pattern=".xml", 
+#                     all.files=TRUE,
+#                     full.names=TRUE)
+
+files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/xml/", 
                     pattern=".xml", 
                     all.files=TRUE,
                     full.names=TRUE)
@@ -148,7 +153,8 @@ note=list(class,clinical_note,feed_status)
 
 # file name
 file_name=paste0(feed_status$note_id[1],".rda")
-data_directory=paste0("~/nlp-perinatal/data/rda/") 
+# data_directory=paste0("~/nlp-perinatal/data/rda/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/") 
 data_path=paste0(data_directory,file_name)
 
 # export

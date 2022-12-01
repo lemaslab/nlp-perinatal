@@ -47,7 +47,12 @@ library(stringr)
 
 # DIRECTORY WITH FILES
 
-files <- list.files(path="~/nlp-perinatal/data/rda/", 
+# files <- list.files(path="~/nlp-perinatal/data/rda/", 
+#                     pattern=".rda", 
+#                     all.files=TRUE,
+#                     full.names=TRUE)
+
+files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/", 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
@@ -55,9 +60,6 @@ files <- list.files(path="~/nlp-perinatal/data/rda/",
 ```
 
 ```{r, warning=FALSE, echo=FALSE}
-
-# CLASSIFICATION 
-
 
 # extract annotations
 file_count=length(files)
@@ -122,7 +124,8 @@ note_class= note_status_tmp %>%
 
 # file name
 file_name=paste0("infantfeed_class_",note_final$data_version[1],".csv")
-data_directory=paste0("~/nlp-perinatal/data/processed/") 
+# data_directory=paste0("~/nlp-perinatal/data/processed/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/processed/") 
 data_path=paste0(data_directory,file_name)
 
 # export
@@ -175,7 +178,8 @@ note_raw[i,2]=raw
 
 # file name
 file_name=paste0("infantfeed_text_10_2022.csv")
-data_directory=paste0("~/nlp-perinatal/data/processed/") 
+# data_directory=paste0("~/nlp-perinatal/data/processed/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/processed/") 
 data_path=paste0(data_directory,file_name)
 
 # export
