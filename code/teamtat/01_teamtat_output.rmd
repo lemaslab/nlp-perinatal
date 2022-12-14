@@ -123,10 +123,13 @@ note_class= note_status_tmp %>%
   select(part_id,note_number,note_id,data_version,class)
 
 # file name
-file_name=paste0("infantfeed_class_",note_class$data_version[1],".csv")
+file_name=paste0(note_class$data_version[1],"_infantfeed_class")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+
 # data_directory=paste0("~/nlp-perinatal/data/processed/") 
 data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
-data_path=paste0(data_directory,file_name)
+data_path=paste0(data_directory,file_name_datestamp)
 
 # export
   write_tsv(note_class, path=data_path, col_names=TRUE)
@@ -177,10 +180,14 @@ note_raw[i,2]=raw
 }  # END FUNCTION
 
 # file name
-file_name=paste0("infantfeed_text_10_2022.csv")
+# paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
+file_name=paste0("11_2022_infantfeed_text")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+
 # data_directory=paste0("~/nlp-perinatal/data/processed/") 
 data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
-data_path=paste0(data_directory,file_name)
+data_path=paste0(data_directory,file_name_datestamp)
 
 # export
   write_tsv(note_raw, path=data_path, col_names=TRUE)

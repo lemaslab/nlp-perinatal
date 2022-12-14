@@ -41,8 +41,6 @@ library(plyr)
 library(tidyverse)
 library(stringr)
 library(tidytext)
-library(wordcloud)
-library(ggplot2)
 library(forcats)
 
 ```
@@ -104,11 +102,16 @@ feeding[i,3]=notes
 }
 
 # file name
+# file_name="feeding_nlp.rda"
+# data_directory=paste0("~/nlp-perinatal/data//tidy/") 
+# data_path=paste0(data_directory,file_name)
+
 file_name="feeding_nlp.rda"
-data_directory=paste0("~/nlp-perinatal/data//tidy/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
 data_path=paste0(data_directory,file_name)
 
 # export
+# paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
 feeding %>% save(feeding, file=data_path)
 
                               
