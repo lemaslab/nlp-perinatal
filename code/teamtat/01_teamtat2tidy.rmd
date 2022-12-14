@@ -57,6 +57,8 @@ files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/",
                     all.files=TRUE,
                     full.names=TRUE)
 
+annotation_date="10_2022"
+
 ```
 
 ```{r, warning=FALSE, echo=FALSE}
@@ -119,11 +121,11 @@ note_status_tmp=note_status %>%
 
 # class output
 note_class= note_status_tmp %>%
-  mutate(data_version="10_2022") %>%
+  mutate(data_version=annotation_date) %>%
   select(part_id,note_number,note_id,data_version,class)
 
 # file name
-file_name=paste0(note_class$data_version[1],"_infantfeed_class")
+file_name=paste0(annotation_date,"_infantfeed_class")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
@@ -181,7 +183,7 @@ note_raw[i,2]=raw
 
 # file name
 # paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
-file_name=paste0("11_2022_infantfeed_text")
+file_name=paste0(annotation_date,"_infantfeed_text")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
@@ -195,4 +197,59 @@ data_path=paste0(data_directory,file_name_datestamp)
 # END CODE BLOCK
 ```
 
+```{r, warning=FALSE, echo=FALSE}
 
+# extract annotations
+file_count=length(files)
+
+# create empty tibble() for data
+feeding <- tibble(
+  note_id= character(),
+  class = character(),
+  note= character(),
+  data_version = character())
+
+# loop through annotations
+for(i in 1:file_count) {
+
+  # loop through each annotation`
+  file_index=files[[i]]
+
+# EXTRACT DATA FROM XML
+
+# import data
+load(file=file_index) 
+
+# note-id
+note_id=unique(note[[3]]$note_id)
+
+# class
+tmp=nrow(note[[1]])
+tmp2=first(note[[1]][[1]])
+class=ifelse(tmp==0,"MISSING-CLASS",tmp2)
+
+# notes
+notes=note[[2]] 
+
+
+# import to tibble
+feeding[i,1]=note_id
+feeding[i,2]=class
+feeding[i,3]=notes 
+feeding[i,4]=annotation_date
+
+}
+
+# file name
+# paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
+file_name=paste0(annotation_date,"_infantfeed_tidy")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
+data_path=paste0(data_directory,file_name_datestamp)
+
+# export
+feeding %>% save(feeding, file=data_path)
+
+# END CODE BLOCK                              
+```
