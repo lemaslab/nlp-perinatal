@@ -125,7 +125,7 @@ note_class= note_status_tmp %>%
 # file name
 file_name=paste0("infantfeed_class_",note_class$data_version[1],".csv")
 # data_directory=paste0("~/nlp-perinatal/data/processed/") 
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/processed/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
 data_path=paste0(data_directory,file_name)
 
 # export
@@ -179,7 +179,7 @@ note_raw[i,2]=raw
 # file name
 file_name=paste0("infantfeed_text_10_2022.csv")
 # data_directory=paste0("~/nlp-perinatal/data/processed/") 
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/processed/") 
+data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
 data_path=paste0(data_directory,file_name)
 
 # export
