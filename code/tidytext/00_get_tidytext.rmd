@@ -51,7 +51,12 @@ library(forcats)
 
 # DIRECTORY WITH FILES
 
-files <- list.files(path="~/nlp-perinatal/data/rda/", 
+# files <- list.files(path="~/nlp-perinatal/data/rda/", 
+#                     pattern=".rda", 
+#                     all.files=TRUE,
+#                     full.names=TRUE)
+
+files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/", 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
