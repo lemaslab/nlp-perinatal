@@ -1,7 +1,7 @@
 ---
-title: "teamtat- output"
+title: "teamtat2tidy"
 author: "Dominick J. Lemas"
-date: "10/25/2022"
+date: "12/15/2022"
 output: html_document
 
 ---
@@ -13,8 +13,8 @@ output: html_document
 # **************************************************************************** #
 
 # Author:            Dominick J. Lemas 
-# Start Date:        October 03, 2022 
-# Last Modified:     October 25, 2022 
+# Start Date:        October  03, 2022 
+# Last Modified:     December 14, 2022 
 # Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
 # IRB Study:         IRB Study #IRB201601899
 # version: R version 4.2.1 (2022-06-23 ucrt) 
@@ -63,6 +63,10 @@ annotation_date="10_2022"
 
 ```{r, warning=FALSE, echo=FALSE}
 
+# **************************************************************************** #
+# ***************                CLASS                         *************** #
+# **************************************************************************** #
+
 # extract annotations
 file_count=length(files)
 
@@ -109,7 +113,6 @@ note_status[i,2]=class_count
 note_status[i,3]=instance_count 
 note_status[i,4]=class
 
-
 }  # END FUNCTION
 
 # create part and note ids
@@ -140,11 +143,11 @@ data_path=paste0(data_directory,file_name_datestamp)
                               
 ```
 
-
-
 ```{r, warning=FALSE, echo=FALSE}
 
-# RAW TEXT
+# **************************************************************************** #
+# ***************                RAW TEXT                      *************** #
+# **************************************************************************** #
 
 # extract annotations
 file_count=length(files)
@@ -178,11 +181,9 @@ raw=note[[2]]
 note_raw[i,1]=note_id
 note_raw[i,2]=raw
 
-
 }  # END FUNCTION
 
 # file name
-# paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
 file_name=paste0(annotation_date,"_infantfeed_text")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
@@ -198,6 +199,10 @@ data_path=paste0(data_directory,file_name_datestamp)
 ```
 
 ```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                TIDY/RDA                      *************** #
+# **************************************************************************** #
 
 # extract annotations
 file_count=length(files)
@@ -231,7 +236,6 @@ class=ifelse(tmp==0,"MISSING-CLASS",tmp2)
 # notes
 notes=note[[2]] 
 
-
 # import to tibble
 feeding[i,1]=note_id
 feeding[i,2]=class
@@ -241,7 +245,6 @@ feeding[i,4]=annotation_date
 }
 
 # file name
-# paste0(format(now, "%Y%m%d_%H%M%S_"), "data_set.csv")
 file_name=paste0(annotation_date,"_infantfeed_tidy")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
