@@ -52,12 +52,16 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/", 
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/"
+
+files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
 annotation_date="10_2022"
+
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/"
 
 ```
 
@@ -132,8 +136,8 @@ file_name=paste0(annotation_date,"_infantfeed_class")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
-# data_directory=paste0("~/nlp-perinatal/data/processed/") 
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
+# path name
+data_directory=data_output_path 
 data_path=paste0(data_directory,file_name_datestamp)
 
 # export
@@ -188,8 +192,8 @@ file_name=paste0(annotation_date,"_infantfeed_text")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
-# data_directory=paste0("~/nlp-perinatal/data/processed/") 
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
+# path name
+data_directory=data_output_path 
 data_path=paste0(data_directory,file_name_datestamp)
 
 # export
@@ -248,7 +252,9 @@ feeding[i,4]=annotation_date
 file_name=paste0(annotation_date,"_infantfeed_tidy")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/") 
+
+# path name
+data_directory=data_output_path 
 data_path=paste0(data_directory,file_name_datestamp)
 
 # export
