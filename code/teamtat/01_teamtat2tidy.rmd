@@ -52,16 +52,16 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/"
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v0/rda/"
 
 files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
-annotation_date="10_2022"
+annotation_date="03_2022"
 
-data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/tidy/"
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v0/tidy/"
 
 ```
 
