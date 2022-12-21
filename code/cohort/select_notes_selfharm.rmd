@@ -1,0 +1,224 @@
+---
+title: "select-notes-selfharm"
+author: "Dominick J. Lemas"
+date: "12/21/2022"
+output: html_document
+
+---
+
+```{r, include=FALSE}
+##-------------- 
+# **************************************************************************** #
+# ***************                Project Overview              *************** #
+# **************************************************************************** #
+
+# Author:            Dominick Lemas 
+# Start Date:        Dec 21, 2022 
+# Last Modified:     
+# Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
+# IRB Study:         IRB Study #IRB201601899
+# version: R version 4.2.1 (2022-06-23 ucrt) 
+# version: RStudio 2022.07.1+554 
+
+# **************************************************************************** #
+# ***************                Objective                     *************** #
+# **************************************************************************** #
+
+#  (1) Identify clinical notes case/controls using ICD9/10 codes. 
+
+```
+
+
+```{r, include=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                Libraries                     *************** #
+# **************************************************************************** #
+
+library(dplyr)
+library(tidyverse)
+library(stringr)
+library(lubridate)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import linked code Data: 1:1 Wide
+# **************************************************************************** #
+
+# import data (self-harm, linked deliveries)
+data_path="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_file="births_selfharm_20221221.rda"
+data_file_path=paste0(data_path,data_file)
+load(data_file_path)
+head(selfharm_births)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import Data: 1:n Long
+# **************************************************************************** #
+
+# PRENATAL NOTES
+prenat_note_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_10_2021/prenatal_notes/"
+prenat_note_file="mom_notes_prenatal_visit.csv"
+prenat_note_file_path=paste0(prenat_note_path,prenat_note_file)
+prenatnotes <- read_csv(prenat_note_file_path, show_col_types = FALSE)
+
+# DELIVERY NOTES
+delivery_note_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_10_2021/delivery_notes/"
+delivery_note_file="mom_notes_at_delivery.csv"
+delivery_note_file_path=paste0(delivery_note_path,delivery_note_file)
+delnotes <- read_csv(delivery_note_file_path, show_col_types = FALSE)
+
+# # POSTNATAL NOTES: MATERNAL (11 metadata files! in progress)
+# prenat_note_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_11_2021/"
+# prenat_note_file="mom_notes_prenatal_visit.csv"
+# prenat_note_file_path=paste0(prenat_note_path,prenat_note_file)
+# prenatnotes <- read_csv(prenat_note_file_path, show_col_types = FALSE)
+
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Select CASES
+# **************************************************************************** #
+
+selfharm_births %>%
+  count(match)
+
+# 527 deliveries with code linked to record. 
+# 134 deliveries with code within 12 months (pre/post delivery)
+
+# maternal ID's for self-harm during pregnancy/postnatal
+cases=selfharm_births %>%
+  filter(current_delivery==1) %>%
+  select(deidentified_mom_id) %>% pull() 
+
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Select NOTES
+# **************************************************************************** #
+
+# prenatal match
+# --------------
+# 74 deliveries with code within 12 months (pre/post delivery)
+# 2,346 notes at prenatal
+
+pre_match= prenatnotes %>%
+  mutate(note_match=if_else(Deidentified_mom_ID %in% cases,1,0)) %>%
+  filter(note_match==1)
+length(unique(pre_match$Deidentified_mom_ID))
+
+
+# delivery match
+#---------------
+# 81 deliveries with code within 12 months (pre/post delivery)
+# 5,964 notes at delivery
+
+del_match= delnotes %>%
+  mutate(note_match=if_else(Deidentified_mom_ID %in% cases,1,0)) %>%
+  filter(note_match==1)
+length(unique(del_match$Deidentified_mom_ID))
+
+```
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Export Data: PRENATAL
+# **************************************************************************** #
+
+# Export Data Files (sharedrive/ RDA)
+#------------------------------------
+file_name_rda=paste0("prenatal_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(pre_match, file=data_path_rda)
+
+# Export Data Files (sharedrive/ CSV)
+#------------------------------------
+file_name_csv=paste0("prenatal_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(pre_match, path=data_path_csv, col_names=TRUE)
+
+# Export Data Files (local/ RDA)
+#------------------------------------
+file_name_rda=paste0("prenatal_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(pre_match, file=data_path_rda)
+
+# Export Data Files (local/ CSV)
+#------------------------------------
+file_name_csv=paste0("prenatal_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(pre_match, path=data_path_csv, col_names=TRUE)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Export Data: DELIVERY
+# **************************************************************************** #
+
+# Export Data Files (sharedrive/ RDA)
+#------------------------------------
+file_name_rda=paste0("delivery_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(del_match, file=data_path_rda)
+
+# Export Data Files (sharedrive/ CSV)
+#------------------------------------
+file_name_csv=paste0("delivery_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(del_match, path=data_path_csv, col_names=TRUE)
+
+# Export Data Files (local/ RDA)
+#------------------------------------
+file_name_rda=paste0("delivery_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(del_match, file=data_path_rda)
+
+# Export Data Files (local/ CSV)
+#------------------------------------
+file_name_csv=paste0("delivery_notes_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+selfharm_directory="~/nlp-perinatal/data/processed/"
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(del_match, path=data_path_csv, col_names=TRUE)
+
+```
+
