@@ -136,7 +136,7 @@ write_tsv(selfharm_births, path=data_path_csv, col_names=TRUE)
 #------------------------------------
 file_name_rda=paste0("births_selfharm")
 now <- Sys.time()
-file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.csv"))
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
 selfharm_directory="~/nlp-perinatal/data/processed/"
 data_path_rda=paste0(selfharm_directory,file_name_datestamp)
 save(selfharm_births, file=data_path_rda)
