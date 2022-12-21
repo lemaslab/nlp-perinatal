@@ -54,7 +54,7 @@ dob_file="baby_mom_at_birth_with_payer.csv"
 dob_file_path=paste0(dob_path,dob_file)
 
 # Import Files
-births <- read_csv(dob_file_path) %>%
+births <- read_csv(dob_file_path, show_col_types = FALSE) %>%
   mutate(dob = mdy_hm(births$date_of_delivery)) %>%
   select(deidentified_baby_id,deidentified_mom_id,dob,-date_of_delivery,
          race_infant,ethnicity_infant,birth_weight,pediatric_gestational_age,
@@ -73,9 +73,10 @@ code_file="selfharm_release.csv"
 code_file_path=paste0(code_path,code_file)
 
 # Import Files
-codes <- read_csv(code_file_path) %>%
+codes <- read_csv(code_file_path, show_col_types = FALSE) %>%
   mutate(code_date=mdy(diagnosis_start_date)) %>%
-  select(-diagnosis_start_date)
+  select(-diagnosis_start_date) %>%
+  filter(diagnosis_type=="ENCOUNTER")
 
 ```
 
@@ -89,10 +90,21 @@ codes <- read_csv(code_file_path) %>%
 match=intersect(births$deidentified_mom_id,codes$deidentified_mom_id)
 
 # merge codes --> births. 
-birth_codes=left_join(births, codes) %>%
+selfharm_births=left_join(births, codes) %>%
   mutate(match=!is.na(diagnosis_type)) %>%
   mutate(days2birth=as.double(difftime(code_date,dob,units ="days"))) %>%
-  select(deidentified_mom_id,deidentified_baby_id,dob,code_date,days2birth,everything())
+  select(deidentified_mom_id,deidentified_baby_id,dob,code_date,days2birth,everything()) %>%
+  mutate(prenatal=if_else(days2birth< -1,1,0),
+         delivery=if_else(days2birth<1 & days2birth>-1, 1,0),
+         postnatal=if_else(days2birth>1,1,0)) %>%
+  mutate(current_delivery=if_else(between(days2birth, -365, 365),1,0)) 
+  
+
+unique(length(selfharm_births$deidentified_mom_id))
+unique(length(selfharm_births$deidentified_baby_id))
+unique(length(births$deidentified_baby_id))
+unique(length(births$deidentified_mom_id))
+
 
 ```
 
@@ -104,31 +116,39 @@ birth_codes=left_join(births, codes) %>%
 
 # Export Data Files (sharedrive/ RDA)
 #------------------------------------
-file_name_rda=paste0("births_selfharm.rda")
+file_name_rda=paste0("births_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
 selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
-data_path_rda=paste0(selfharm_directory,file_name_rda)
-save(birth_codes, file=data_path_rda)
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(selfharm_births, file=data_path_rda)
 
 # Export Data Files (sharedrive/ CSV)
 #------------------------------------
-file_name_csv=paste0("births_selfharm.csv")
+file_name_csv=paste0("births_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
 selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
-data_path_csv=paste0(selfharm_directory,file_name_csv)
-write_tsv(birth_codes, path=data_path_csv, col_names=TRUE)
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(selfharm_births, path=data_path_csv, col_names=TRUE)
 
 # Export Data Files (local/ RDA)
 #------------------------------------
-file_name_rda=paste0("births_selfharm.rda")
+file_name_rda=paste0("births_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.csv"))
 selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_rda=paste0(selfharm_directory,file_name_rda)
-save(birth_codes, file=data_path_rda)
+data_path_rda=paste0(selfharm_directory,file_name_datestamp)
+save(selfharm_births, file=data_path_rda)
 
 # Export Data Files (local/ CSV)
 #------------------------------------
-file_name_csv=paste0("births_selfharm.csv")
+file_name_csv=paste0("births_selfharm")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
 selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_csv=paste0(selfharm_directory,file_name_csv)
-write_tsv(birth_codes, path=data_path_csv, col_names=TRUE)
+data_path_csv=paste0(selfharm_directory,file_name_datestamp)
+write_tsv(selfharm_births, path=data_path_csv, col_names=TRUE)
 
 
 ```
