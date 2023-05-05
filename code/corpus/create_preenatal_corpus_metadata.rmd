@@ -108,8 +108,6 @@ prenatal_notes_metadata=full_join(prenatal_notes, births) %>%
   mutate(current_delivery=if_else(between(days2birth, -365, 365),1,0)) %>%
   filter(current_delivery==1) 
 
-
-
 ```
 
 ```{r, warning=FALSE, echo=FALSE}
@@ -138,65 +136,21 @@ write_tsv(prenatal_notes_metadata, path=data_path_csv, col_names=TRUE)
 
 # Export Data Files (local/ RDA)
 #------------------------------------
-file_name_rda=paste0("prenatal_notes_selfharm")
+file_name_rda=paste0("prenatal_notes_metadata")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
-selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_rda=paste0(selfharm_directory,file_name_datestamp)
-save(pre_match, file=data_path_rda)
+prenatal_directory="~/nlp-perinatal/data/processed/"
+data_path_rda=paste0(prenatal_directory,file_name_datestamp)
+save(prenatal_notes_metadata, file=data_path_rda)
 
 # Export Data Files (local/ CSV)
 #------------------------------------
-file_name_csv=paste0("prenatal_notes_selfharm")
+file_name_csv=paste0("prenatal_notes_metadata")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
-selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_csv=paste0(selfharm_directory,file_name_datestamp)
-write_tsv(pre_match, path=data_path_csv, col_names=TRUE)
-
-```
-
-```{r, warning=FALSE, echo=FALSE}
-
-# **************************************************************************** #
-# ***************               Export Data: DELIVERY
-# **************************************************************************** #
-
-# Export Data Files (sharedrive/ RDA)
-#------------------------------------
-file_name_rda=paste0("delivery_notes_selfharm")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
-selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
-data_path_rda=paste0(selfharm_directory,file_name_datestamp)
-save(del_match, file=data_path_rda)
-
-# Export Data Files (sharedrive/ CSV)
-#------------------------------------
-file_name_csv=paste0("delivery_notes_selfharm")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
-selfharm_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/self_harm/"
-data_path_csv=paste0(selfharm_directory,file_name_datestamp)
-write_tsv(del_match, path=data_path_csv, col_names=TRUE)
-
-# Export Data Files (local/ RDA)
-#------------------------------------
-file_name_rda=paste0("delivery_notes_selfharm")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
-selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_rda=paste0(selfharm_directory,file_name_datestamp)
-save(del_match, file=data_path_rda)
-
-# Export Data Files (local/ CSV)
-#------------------------------------
-file_name_csv=paste0("delivery_notes_selfharm")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
-selfharm_directory="~/nlp-perinatal/data/processed/"
-data_path_csv=paste0(selfharm_directory,file_name_datestamp)
-write_tsv(del_match, path=data_path_csv, col_names=TRUE)
+prenatal_directory="~/nlp-perinatal/data/processed/"
+data_path_csv=paste0(prenatal_directory,file_name_datestamp)
+write_tsv(prenatal_notes_metadata, path=data_path_csv, col_names=TRUE)
 
 ```
 
