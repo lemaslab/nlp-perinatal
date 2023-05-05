@@ -1,0 +1,156 @@
+---
+title: "create-corpus-metadata: delivery"
+author: "Dominick J. Lemas"
+date: "05/05/2023"
+output: html_document
+
+---
+
+```{r, include=FALSE}
+##-------------- 
+# **************************************************************************** #
+# ***************                Project Overview              *************** #
+# **************************************************************************** #
+
+# Author:            Dominick Lemas 
+# Start Date:        May 05, 2023 
+# Last Modified:     
+# Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
+# IRB Study:         IRB Study #IRB201601899
+# version: R version 4.2.1 (2022-06-23 ucrt) 
+# version: RStudio 2022.07.1+554 
+
+# **************************************************************************** #
+# ***************                Objective                     *************** #
+# **************************************************************************** #
+
+#  (1) create metadata file for the entire corpus:
+# - prenatal
+# - delivery
+# - postnatal-mom
+# - postnatal-infant 
+
+# NOTE- what are LETTER notes? They have not timestamp. Are they important? Hard to link with specfic delivery without date. 
+
+```
+
+
+```{r, include=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                Libraries                     *************** #
+# **************************************************************************** #
+
+library(dplyr)
+library(tidyverse)
+library(stringr)
+library(lubridate)
+
+```
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import Birth Data
+# **************************************************************************** #
+
+# Path (prenatal notes: 1:1 wide format)
+data_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_09_2021/"
+data_file="baby_mom_at_birth_with_payer.csv"
+data_file_path=paste0(data_path,data_file);data_file_path
+
+# Import Files
+births <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  mutate(dob = mdy_hm(date_of_delivery)) %>%
+  select(deidentified_baby_id,deidentified_mom_id,dob)
+
+```
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import Delivery Note Data
+# **************************************************************************** #
+
+# Path (prenatal notes: 1:n long format)
+data_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_10_2021/delivery_notes/"
+data_file="mom_notes_at_delivery.csv"
+delivery_data_file_path=paste0(data_path,data_file);data_file_path
+
+# Import Files
+delivery_notes <- read_csv(delivery_data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deid_note_id = deid_note_ID) 
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Merge Prenatal Note Data w/ Births
+# **************************************************************************** #
+
+head(births)
+head(delivery_notes) 
+
+# merge codes --> births. 
+delivery_notes_metadata=full_join(delivery_notes, births) %>%
+  arrange(deidentified_mom_id,deidentified_baby_id) %>%
+  mutate(match=!is.na(note_created_datetime)) %>%
+  filter(match==TRUE) %>%
+  mutate(days2birth=as.double(difftime(note_created_datetime,dob,units ="days"))) %>%
+  select(deidentified_mom_id,deidentified_baby_id,dob,note_created_datetime,days2birth,everything()) %>%
+  mutate(prenatal=if_else(days2birth< -1,1,0),
+         delivery=if_else(days2birth<1 & days2birth>-1, 1,0),
+         postnatal=if_else(days2birth>1,1,0)) %>%
+  mutate(current_delivery=if_else(between(days2birth, -365, 365),1,0)) %>%
+  filter(current_delivery==1) 
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Export Data: DELIVERY NOTES
+# **************************************************************************** #
+
+# Export Data Files (sharedrive/ RDA)
+#------------------------------------
+file_name_rda=paste0("delivery_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+delivery_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_notes/"
+data_path_rda=paste0(delivery_directory,file_name_datestamp)
+save(delivery_notes_metadata, file=data_path_rda)
+
+# Export Data Files (sharedrive/ CSV)
+#------------------------------------
+file_name_csv=paste0("prenatal_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+delivery_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_notes/"
+data_path_csv=paste0(delivery_directory,file_name_datestamp)
+write_tsv(delivery_notes_metadata, path=data_path_csv, col_names=TRUE)
+
+# Export Data Files (local/ RDA)
+#------------------------------------
+file_name_rda=paste0("prenatal_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+delivery_directory="~/nlp-perinatal/data/processed/"
+data_path_rda=paste0(delivery_directory,file_name_datestamp)
+save(delivery_notes_metadata, file=data_path_rda)
+
+# Export Data Files (local/ CSV)
+#------------------------------------
+file_name_csv=paste0("prenatal_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+delivery_directory="~/nlp-perinatal/data/processed/"
+data_path_csv=paste0(delivery_directory,file_name_datestamp)
+write_tsv(delivery_notes_metadata, path=data_path_csv, col_names=TRUE)
+
+```
+
