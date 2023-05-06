@@ -1,5 +1,5 @@
 ---
-title: "create-corpus-metadata"
+title: "create-corpus-metadata: prenatal"
 author: "Dominick J. Lemas"
 date: "05/05/2023"
 output: html_document
@@ -26,9 +26,6 @@ output: html_document
 
 #  (1) create metadata file for the entire corpus:
 # - prenatal
-# - delivery
-# - postnatal-mom
-# - postnatal-infant 
 
 # NOTE- what are LETTER notes? They have not timestamp. Are they important? Hard to link with specfic delivery without date. 
 
@@ -106,7 +103,8 @@ prenatal_notes_metadata=full_join(prenatal_notes, births) %>%
          delivery=if_else(days2birth<1 & days2birth>-1, 1,0),
          postnatal=if_else(days2birth>1,1,0)) %>%
   mutate(current_delivery=if_else(between(days2birth, -365, 365),1,0)) %>%
-  filter(current_delivery==1) 
+  filter(current_delivery==1) %>%
+  mutate(note_set="prenatal")
 
 ```
 
@@ -134,23 +132,23 @@ prenatal_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_
 data_path_csv=paste0(prenatal_directory,file_name_datestamp)
 write_tsv(prenatal_notes_metadata, path=data_path_csv, col_names=TRUE)
 
-# Export Data Files (local/ RDA)
-#------------------------------------
-file_name_rda=paste0("prenatal_notes_metadata")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
-prenatal_directory="~/nlp-perinatal/data/processed/"
-data_path_rda=paste0(prenatal_directory,file_name_datestamp)
-save(prenatal_notes_metadata, file=data_path_rda)
-
-# Export Data Files (local/ CSV)
-#------------------------------------
-file_name_csv=paste0("prenatal_notes_metadata")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
-prenatal_directory="~/nlp-perinatal/data/processed/"
-data_path_csv=paste0(prenatal_directory,file_name_datestamp)
-write_tsv(prenatal_notes_metadata, path=data_path_csv, col_names=TRUE)
+# # Export Data Files (local/ RDA)
+# #------------------------------------
+# file_name_rda=paste0("prenatal_notes_metadata")
+# now <- Sys.time()
+# file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+# prenatal_directory="~/nlp-perinatal/data/processed/"
+# data_path_rda=paste0(prenatal_directory,file_name_datestamp)
+# save(prenatal_notes_metadata, file=data_path_rda)
+# 
+# # Export Data Files (local/ CSV)
+# #------------------------------------
+# file_name_csv=paste0("prenatal_notes_metadata")
+# now <- Sys.time()
+# file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+# prenatal_directory="~/nlp-perinatal/data/processed/"
+# data_path_csv=paste0(prenatal_directory,file_name_datestamp)
+# write_tsv(prenatal_notes_metadata, path=data_path_csv, col_names=TRUE)
 
 ```
 
