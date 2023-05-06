@@ -63,7 +63,6 @@ births <- read_csv(data_file_path, show_col_types = FALSE) %>%
 
 ```
 
-
 ```{r, warning=FALSE, echo=FALSE}
 
 # **************************************************************************** #
