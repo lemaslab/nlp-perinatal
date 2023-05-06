@@ -1,0 +1,257 @@
+---
+title: "create-corpus-metadata: postnatal-maternal"
+author: "Dominick J. Lemas"
+date: "05/05/2023"
+output: html_document
+---
+
+```{r, include=FALSE}
+##-------------- 
+# **************************************************************************** #
+# ***************                Project Overview              
+# **************************************************************************** #
+
+# Author:            Dominick Lemas 
+# Start Date:        May 05, 2023 
+# Last Modified:     
+# Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
+# IRB Study:         IRB Study #IRB201601899
+# version: R version 4.2.1 (2022-06-23 ucrt) 
+# version: RStudio 2022.07.1+554 
+
+# **************************************************************************** #
+# ***************                Objective                     
+# **************************************************************************** #
+
+#  (1) create metadata file for the entire corpus:
+# - postnatal-maternal 
+
+# NOTE- what are LETTER notes? They have not timestamp. Are they important? Hard to link with specfic delivery without date. 
+
+```
+
+
+```{r, include=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                Libraries                     
+# **************************************************************************** #
+
+library(dplyr)
+library(tidyverse)
+library(stringr)
+library(lubridate)
+
+```
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import Birth Data
+# **************************************************************************** #
+
+# Path (prenatal notes: 1:1 wide format)
+data_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_09_2021/"
+data_file="baby_mom_at_birth_with_payer.csv"
+data_file_path=paste0(data_path,data_file);data_file_path
+
+# Import Files
+births <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  mutate(dob = mdy_hm(date_of_delivery)) %>%
+  select(deidentified_baby_id,deidentified_mom_id,dob)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Import Postnatal Infant Note Data
+# **************************************************************************** #
+
+# Path (prenatal notes: 1:n long format)
+data_path="V:/FACULTY/DJLEMAS/EHR_Data/raw/READ_ONLY_DATASETS/10year_data/2021/dataset_11_2021/mom_subjects_clinical_notes_details/"
+
+# data file-01
+#-------------
+# names/directory
+data_file_01="subjects_clinical_notes_details_1.csv"
+data_file_path=paste0(data_path,data_file_01);data_file_path
+# Import Files
+data01 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-02
+#-------------
+# names/directory
+data_file_02="subjects_clinical_notes_details_2.csv"
+data_file_path=paste0(data_path,data_file_02);data_file_path
+# Import Files
+data02 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-03
+#-------------
+# names/directory
+data_file_03="subjects_clinical_notes_details_3.csv"
+data_file_path=paste0(data_path,data_file_03);data_file_path
+# Import Files
+data03 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-04
+#-------------
+# names/directory
+data_file_04="subjects_clinical_notes_details_4.csv"
+data_file_path=paste0(data_path,data_file_04);data_file_path
+# Import Files
+data04 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-05
+#-------------
+# names/directory
+data_file_05="subjects_clinical_notes_details_5.csv"
+data_file_path=paste0(data_path,data_file_05);data_file_path
+# Import Files
+data05 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-06
+#-------------
+# names/directory
+data_file_06="subjects_clinical_notes_details_6.csv"
+data_file_path=paste0(data_path,data_file_06);data_file_path
+# Import Files
+data06 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-07
+#-------------
+# names/directory
+data_file_07="subjects_clinical_notes_details_7.csv"
+data_file_path=paste0(data_path,data_file_07);data_file_path
+# Import Files
+data07 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-08
+#-------------
+# names/directory
+data_file_08="subjects_clinical_notes_details_8.csv"
+data_file_path=paste0(data_path,data_file_08);data_file_path
+# Import Files
+data08 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-09
+#-------------
+# names/directory
+data_file_09="subjects_clinical_notes_details_9.csv"
+data_file_path=paste0(data_path,data_file_09);data_file_path
+# Import Files
+data09 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-10
+#-------------
+# names/directory
+data_file_10="subjects_clinical_notes_details_10.csv"
+data_file_path=paste0(data_path,data_file_10);data_file_path
+# Import Files
+data10 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+# data file-11
+#-------------
+# names/directory
+data_file_11="subjects_clinical_notes_details_11.csv"
+data_file_path=paste0(data_path,data_file_11);data_file_path
+# Import Files
+data11 <- read_csv(data_file_path, show_col_types = FALSE) %>%
+  rename(deidentified_mom_id = Deidentified_mom_ID,
+         deidentified_note_key = Deidentified_note_key) 
+
+mom_postnatal_notes=rbind(data01,data02,data03,data04,data05,data06,data07,data08,data09,data10,data11)
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Merge Postnatal Infant Note Data w/ Births
+# **************************************************************************** #
+
+head(births)
+head(mom_postnatal_notes) 
+
+# merge codes --> births. 
+postnatal_maternal_notes_metadata=full_join(mom_postnatal_notes, births) %>%
+  arrange(deidentified_mom_id,deidentified_baby_id) %>%
+  mutate(match=!is.na(note_created_datetime)) %>%
+  filter(match==TRUE) %>%
+  mutate(days2birth=as.double(difftime(note_created_datetime,dob,units ="days"))) %>%
+  select(deidentified_mom_id,deidentified_baby_id,dob,note_created_datetime,days2birth,everything()) %>%
+  mutate(prenatal=if_else(days2birth< -1,1,0),
+         delivery=if_else(days2birth<1 & days2birth>-1, 1,0),
+         postnatal=if_else(days2birth>1,1,0)) %>%
+  mutate(current_delivery=if_else(between(days2birth, -365, 365),1,0)) %>%
+  filter(current_delivery==1) %>%
+  mutate(note_set="postnatal-maternal")
+
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************               Export Data: Postnatal Infant Notes
+# **************************************************************************** #
+
+# Export Data Files (sharedrive/ RDA)
+#------------------------------------
+file_name_rda=paste0("postnatal_maternal_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_notes/"
+data_path_rda=paste0(directory,file_name_datestamp)
+save(postnatal_maternal_notes_metadata, file=data_path_rda)
+
+# Export Data Files (sharedrive/ CSV)
+#------------------------------------
+file_name_csv=paste0("postnatal_maternal_notes_metadata")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_notes/"
+data_path_csv=paste0(directory,file_name_datestamp)
+write_tsv(postnatal_maternal_notes_metadata, path=data_path_csv, col_names=TRUE)
+
+# # Export Data Files (local/ RDA)
+# #------------------------------------
+# file_name_rda=paste0("postnatal_baby_notes_metadata")
+# now <- Sys.time()
+# file_name_datestamp=paste0(file_name_rda, format(now, "_%Y%m%d.rda"))
+# directory="~/nlp-perinatal/data/processed/"
+# data_path_rda=paste0(directory,file_name_datestamp)
+# save(postnatal_maternal_notes_metadata, file=data_path_rda)
+# 
+# # Export Data Files (local/ CSV)
+# #------------------------------------
+# file_name_csv=paste0("postnatal_baby_notes_metadata")
+# now <- Sys.time()
+# file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
+# directory="~/nlp-perinatal/data/processed/"
+# data_path_csv=paste0(directory,file_name_datestamp)
+# write_tsv(postnatal_maternal_notes_metadata, path=data_path_csv, col_names=TRUE)
+
+```
+
