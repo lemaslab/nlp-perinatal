@@ -126,7 +126,7 @@ save(delivery_notes_metadata, file=data_path_rda)
 
 # Export Data Files (sharedrive/ CSV)
 #------------------------------------
-file_name_csv=paste0("prenatal_notes_metadata")
+file_name_csv=paste0("delivery_notes_metadata")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name_csv, format(now, "_%Y%m%d.csv"))
 delivery_directory="V:/FACULTY/DJLEMAS/EHR_Data/processed/10_year_data/clinical_notes/"
