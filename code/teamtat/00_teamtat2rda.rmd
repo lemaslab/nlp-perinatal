@@ -1,7 +1,7 @@
 ---
 title: "teamtat-to-rda: infant feeding"
 author: "Dominick J. Lemas"
-date: "10/03/2022"
+date: "05/08/2023"
 output: html_document
 
 ---
@@ -14,7 +14,7 @@ output: html_document
 
 # Author:            Dominick J. Lemas 
 # Start Date:        October 03, 2022 
-# Last Modified:      
+# Last Modified:     May 08, 2023 
 # Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
 # IRB Study:         IRB Study #IRB201601899
 # version: R version 4.2.1 (2022-06-23 ucrt) 
@@ -52,10 +52,23 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-files <- list.files(path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/xml/", 
-                    pattern=".xml", 
+# DIRECTORY WITH FILES (UFRC)
+
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/xml/"
+
+files <- list.files(path=data_input_path,
+                    pattern=".xml",
                     all.files=TRUE,
                     full.names=TRUE)
+
+teamtat_project="project_1.2"
+teamtat_version="v5"
+now <- Sys.time()
+analysis_date=paste0(format(now, "%Y%m%d"))
+
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/rda/"
+
+# data_output_path="~/mombaby-ehr-nlp/data/rda/"
 
 ```
 
@@ -67,6 +80,17 @@ file_count=length(files)
 # loop through annotations
 for(i in 1:file_count) {
 
+annotation_metadata <- tibble(
+  annotate_id = character(),
+  class = character(),
+  identifier = character(),
+  annotator = character(),
+  date = character(),
+  offset = numeric(),
+  length = numeric(),
+  text = character()
+  )
+  
   # loop through each annotation`
   file_index=files[[i]]
 
@@ -75,43 +99,24 @@ for(i in 1:file_count) {
 # import data
 x <- read_xml(file_index)
 
-# DESCRIPTIVE FUNCTIONS
-# xml_name(x)
-# xml_children(x)
-# xml_text(x)
-
-# create empty tibble() for data
-feed_status <- tibble(
-  note_id= character(),
-  annotation_id = character(),
-  class = character(),
-  identifier = character(),
-  annotator = character(),
-  date = character(),
-  offset = numeric(),
-  length = numeric(),
-  text = character()
-)
-
-# extract note ID
+# extract teamtat & clinical-note ID
+teamtat_id=xml_find_all(x, "//id") %>% xml_text(trim=TRUE) %>% as_tibble() %>% pull()
 passage=xml_find_all(x, "//passage/text") %>% xml_text(trim=TRUE) %>% as_tibble()
 note_id_all=last(passage$value)
 note_id_tmp=str_replace_all(note_id_all, fixed(" "), "") 
 note_id_tmp1=str_replace_all(note_id_tmp, fixed(":"), "_")
-note_id_final=str_replace_all(note_id_tmp1, fixed(","), "_")
+note_id=str_replace_all(note_id_tmp1, fixed(","), "_")
 
 # extract annotations
-annotate=xml_find_all(x, "//annotation")
 clinical_note=passage[[1]][1]
+annotate=xml_find_all(x, "//annotation") 
 
-# extract annotations
-index=length(annotate)
 
 # loop through annotations
-for(i in 1:index) {
+for(j in 1:length(annotate)) {
 
   # loop through each annotation`
-  annotate_index=annotate[[i]]
+  annotate_index=annotate[[j]]
   
   # ID
   annotate_id=xml_attr(annotate_index, "id")
@@ -131,34 +136,42 @@ for(i in 1:index) {
   text_all=xml_find_all(annotate_index, "text") %>% xml_text(trim=TRUE)
 
     # import to tibble
-    feed_status[i,1]=note_id_final
-    feed_status[i,2]=annotate_id
-    feed_status[i,3]=annotate_merge %>% filter(attr=="type") %>% select(text)
-    feed_status[i,4]=annotate_merge %>% filter(attr=="identifier") %>% select(text)
-    feed_status[i,5]=annotate_merge %>% filter(attr=="annotator") %>% select(text)
-    feed_status[i,6]=annotate_merge %>% filter(attr=="updated_at") %>% select(text)
-    feed_status[i,7]=offset 
-    feed_status[i,8]=length
-    feed_status[i,9]=text_all
+    annotation_metadata[j,1]=annotate_id
+    annotation_metadata[j,2]=annotate_merge %>% filter(attr=="type") %>% select(text)
+    annotation_metadata[j,3]=annotate_merge %>% filter(attr=="identifier") %>% select(text)
+    annotation_metadata[j,4]=annotate_merge %>% filter(attr=="annotator") %>% select(text)
+    annotation_metadata[j,5]=annotate_merge %>% filter(attr=="updated_at") %>% select(text)
+    annotation_metadata[j,6]=offset 
+    annotation_metadata[j,7]=length
+    annotation_metadata[j,8]=text_all
    
   }
 
-# feed_status output
-feed_status
+# populate data-frame
+
+note_metadata=as_tibble(cbind(teamtat_id,note_id))
+
+note_info = note_metadata %>%
+  mutate(teamtat_project=teamtat_project,
+         teamtat_version=teamtat_version,
+         run_date=analysis_date)
 
 # annotation output
-class=feed_status %>% filter(class=="FEED_CLASS") %>% select(text) %>% rename(., class = text)
+class=annotation_metadata %>% filter(class=="FEED_CLASS") %>% select(text) %>% pull() 
 clinical_note
-note=list(class,clinical_note,feed_status)
+note=list(class,note_info,clinical_note,annotation_metadata)
 
 # file name
-file_name=paste0(feed_status$note_id[1],".rda")
-# data_directory=paste0("~/nlp-perinatal/data/rda/") 
-data_directory=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/v1/rda/") 
-data_path=paste0(data_directory,file_name)
+file_name=paste0(teamtat_id,".rda")
+
+# path name
+data_path=paste0(data_output_path,file_name)
 
 # export
 note %>% save(note, file=data_path)
+
+# rm(note,annotate_index,annotation_metadata,class,data_final, feed_notes,
+#    infon_df,infon_wider, note_info, note_metadata, note_status, passage, x, xml, xml_df)
 
 }
 
