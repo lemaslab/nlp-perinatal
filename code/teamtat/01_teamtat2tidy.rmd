@@ -1,5 +1,5 @@
 ---
-title: "teamtat2tidy"
+title: "teamtat2tidy: infant feeding"
 author: "Dominick J. Lemas"
 date: "05/09/2023"
 output: html_document
@@ -14,7 +14,7 @@ output: html_document
 
 # Author:            Dominick J. Lemas 
 # Start Date:        October  03, 2022 
-# Last Modified:     December 14, 2022 
+# Last Modified:     May 09, 2023 
 # Title:             UFHealth Early Life Exposures and Pediatric Outcomes  
 # IRB Study:         IRB Study #IRB201601899
 # version: R version 4.2.1 (2022-06-23 ucrt) 
@@ -52,16 +52,26 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/v0/rda/"
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/rda/"
 
 files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
-annotation_date="03_2022"
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/tidy/"
 
-data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/v0/tidy/"
+# create empty tibble() for data
+note_status <- tibble(
+  teamtat_id = character(),
+  note_id = character(),
+  teamtat_project = character(),
+  teamtat_version = character(),
+  run_date = character(),
+  class_count = integer(),
+  instance_count = integer(),
+  class = character(),
+  identifier = character())
 
 ```
 
@@ -74,13 +84,6 @@ data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/v0/tidy/
 # extract annotations
 file_count=length(files)
 
-# create empty tibble() for data
-note_status <- tibble(
-  note_id= character(),
-  class_count = integer(),
-  instance_count= integer(),
-  class= character())
-
 # loop through annotations
 for(i in 1:file_count) {
 
@@ -92,11 +95,15 @@ file_index=files[[i]]
 # import data
 load(file=file_index) 
 
-# note-id
-feed_notes=note[[3]] %>%
+# teamtat-id and note-id
+feed_notes=note[[4]] %>%
   mutate(class=as.factor(class),
          class_total=length(class))
-note_id=unique(feed_notes$note_id)
+teamtat_id=note[[2]][1] %>% pull()
+note_id=note[[2]][2] %>% pull()
+teamtat_project=note[[2]][3] %>% pull()
+teamtat_version=note[[2]][4] %>% pull()
+run_date=note[[2]][5] %>% pull()
 
 # class_count
 class_count=feed_notes %>%
@@ -111,11 +118,20 @@ instance_count=feed_notes %>%
 # class
 class=note[[1]]
 
+# identifier
+identifier=feed_notes$identifier 
+
 # import to tibble
-note_status[i,1]=note_id
-note_status[i,2]=class_count
-note_status[i,3]=instance_count 
-note_status[i,4]=class
+note_status[i,1]=teamtat_id
+note_status[i,2]=note_id
+note_status[i,3]=teamtat_project
+note_status[i,4]=teamtat_version 
+note_status[i,5]=run_date
+note_status[i,6]=class_count
+note_status[i,7]=instance_count
+note_status[i,8]=class
+note_status[i,9]=identifier
+
 
 }  # END FUNCTION
 
@@ -126,13 +142,10 @@ note_status_tmp=note_status %>%
   separate(note_id_tmp,sep="_",c(NA, "part_id",NA,NA)) %>%
   separate(note_id_tmp2,sep="_",c(NA,NA,NA,"note_number"))
 
-# class output
-note_class= note_status_tmp %>%
-  mutate(data_version=annotation_date) %>%
-  select(part_id,note_number,note_id,data_version,class)
+note_status=note_status_tmp
 
 # file name
-file_name=paste0(annotation_date,"_infantfeed_class")
+file_name=paste0(teamtat_project,"_infantfeed_tidy")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
@@ -141,8 +154,8 @@ data_directory=data_output_path
 data_path=paste0(data_directory,file_name_datestamp)
 
 # export
-  write_tsv(note_class, path=data_path, col_names=TRUE)
-
+  write_tsv(note_status, path=data_path, col_names=TRUE)
+                              
 # END CODE BLOCK
                               
 ```
