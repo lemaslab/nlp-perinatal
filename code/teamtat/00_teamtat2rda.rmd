@@ -54,19 +54,19 @@ library(stringr)
 
 # DIRECTORY WITH FILES (UFRC)
 
-data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/xml/"
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/xml/"
 
 files <- list.files(path=data_input_path,
                     pattern=".xml",
                     all.files=TRUE,
                     full.names=TRUE)
 
-teamtat_project="project_1.2"
-teamtat_version="v5"
+teamtat_project="project_4.2"
+teamtat_version="v1"
 now <- Sys.time()
 analysis_date=paste0(format(now, "%Y%m%d"))
 
-data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/rda/"
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/rda/"
 
 # data_output_path="~/mombaby-ehr-nlp/data/rda/"
 
