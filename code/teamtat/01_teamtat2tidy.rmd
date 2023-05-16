@@ -37,7 +37,7 @@ output: html_document
 
 library(xml2)
 library(XML) 
-library(plyr)
+library(dplyr)
 library(tidyverse)
 library(stringr)
 
@@ -47,19 +47,30 @@ library(stringr)
 
 # DIRECTORY WITH FILES
 
+proj="project8"
+ver="v3"
+
 # files <- list.files(path="~/nlp-perinatal/data/rda/", 
 #                     pattern=".rda", 
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
+<<<<<<< HEAD
 data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project8/v3/rda/"
+=======
+data_input_path=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/",proj,"/",ver,"/rda/")
+>>>>>>> 0dd2f9befd277ca6f8da0318a445278951f40cd2
 
 files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
+<<<<<<< HEAD
 data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project8/v3/tidy/"
+=======
+data_output_path=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/",proj,"/",ver,"/tidy/")
+>>>>>>> 0dd2f9befd277ca6f8da0318a445278951f40cd2
 
 # create empty tibble() for data
 note_status <- tibble(
@@ -190,14 +201,17 @@ file_index=files[[i]]
 # import data
 load(file=file_index) 
 
+# project-id
+teamtat_project=note[[2]][3] %>% pull()
+
 # note-id
-feed_notes=note[[3]] %>%
+feed_notes=note[[4]] %>%
   mutate(class=as.factor(class),
          class_total=length(class))
-note_id=unique(feed_notes$note_id)
+note_id=note[[2]][2]
 
 # note-text
-raw=note[[2]]
+raw=note[[3]]
 
 # import to tibble
 note_raw[i,1]=note_id
@@ -205,78 +219,35 @@ note_raw[i,2]=raw
 
 }  # END FUNCTION
 
+# EXPORT RAW TEXT
+#---------------
 # file name
-file_name=paste0(annotation_date,"_infantfeed_text")
+file_name=paste0(teamtat_project,"_infantfeed_text")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
 # path name
 data_directory=data_output_path 
-data_path=paste0(data_directory,file_name_datestamp)
+data_path_tsv=paste0(data_directory,file_name_datestamp)
 
 # export
-  write_tsv(note_raw, path=data_path, col_names=TRUE)
-
-# END CODE BLOCK
-```
-
-```{r, warning=FALSE, echo=FALSE}
-
-# **************************************************************************** #
-# ***************                TIDY/RDA                      *************** #
-# **************************************************************************** #
-
-# extract annotations
-file_count=length(files)
-
-# create empty tibble() for data
-feeding <- tibble(
-  note_id= character(),
-  class = character(),
-  note= character(),
-  data_version = character())
-
-# loop through annotations
-for(i in 1:file_count) {
-
-  # loop through each annotation`
-  file_index=files[[i]]
-
-# EXTRACT DATA FROM XML
-
-# import data
-load(file=file_index) 
-
-# note-id
-note_id=unique(note[[3]]$note_id)
-
-# class
-tmp=nrow(note[[1]])
-tmp2=first(note[[1]][[1]])
-class=ifelse(tmp==0,"MISSING-CLASS",tmp2)
-
-# notes
-notes=note[[2]] 
-
-# import to tibble
-feeding[i,1]=note_id
-feeding[i,2]=class
-feeding[i,3]=notes 
-feeding[i,4]=annotation_date
-
-}
-
+  write_tsv(note_raw, path=data_path_tsv, col_names=TRUE)
+  
+# EXPORT RDA OBJECT
+#------------------
 # file name
-file_name=paste0(annotation_date,"_infantfeed_tidy")
+file_name=paste0(teamtat_project,"_infantfeed_tidytext")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
 
 # path name
 data_directory=data_output_path 
-data_path=paste0(data_directory,file_name_datestamp)
+data_path_rda=paste0(data_directory,file_name_datestamp)
 
 # export
-feeding %>% save(feeding, file=data_path)
+save(note_raw, file=data_path_rda)
+  
 
-# END CODE BLOCK                              
+# END CODE BLOCK
 ```
+
