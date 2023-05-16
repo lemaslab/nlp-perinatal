@@ -52,14 +52,14 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/rda/"
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/rda/"
 
 files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
-data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project1.2/v5/tidy/"
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/tidy/"
 
 # create empty tibble() for data
 note_status <- tibble(
@@ -119,7 +119,12 @@ instance_count=feed_notes %>%
 class=note[[1]]
 
 # identifier
-identifier=feed_notes$identifier 
+identifier=feed_notes %>%
+  filter(class=="FEED_CLASS") %>%
+  select(identifier) %>% pull() 
+
+# text
+text=note[[4]][8]
 
 # import to tibble
 note_status[i,1]=teamtat_id
