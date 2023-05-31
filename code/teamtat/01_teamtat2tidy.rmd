@@ -52,14 +52,14 @@ library(stringr)
 #                     all.files=TRUE,
 #                     full.names=TRUE)
 
-data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/rda/"
+data_input_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project5.2/v1/rda/"
 
 files <- list.files(path=data_input_path, 
                     pattern=".rda", 
                     all.files=TRUE,
                     full.names=TRUE)
 
-data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project4.2/v1/tidy/"
+data_output_path="V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/project5.2/v1/tidy/"
 
 # create empty tibble() for data
 note_status <- tibble(
