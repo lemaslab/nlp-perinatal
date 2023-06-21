@@ -57,10 +57,35 @@ library(stringr)
 # proj="project2.2"
 # ver="v1"
 
-# project 3.2
+# # project 3.2
+# # -----------
+# proj="project3.2"
+# ver="v1"
+
+# # project 4.2
+# # -----------
+# proj="project4.2"
+# ver="v1"
+
+# # project 5.2
+# # -----------
+# proj="project5.2"
+# ver="v1"
+
+# # project 6
+# # -----------
+# proj="project6"
+# ver="v1"
+
+# # project 7
+# # -----------
+# proj="project7"
+# ver="v2"
+
+# project 8
 # -----------
-proj="project3.2"
-ver="v1"
+proj="project8"
+ver="v3"
 
 # files <- list.files(path="~/nlp-perinatal/data/rda/", 
 #                     pattern=".rda", 
@@ -260,9 +285,7 @@ data_path_rda=paste0(data_directory,file_name_datestamp)
 save(note_raw, file=data_path_rda)
   
 # END CODE BLOCK #2
-```
 
-```{r, warning=FALSE, echo=FALSE}
 
 # **************************************************************************** #
 # ***************                INSTANCE-STRUCTURED/RAW       *************** #
