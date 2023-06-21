@@ -47,7 +47,14 @@ library(stringr)
 
 # DIRECTORY WITH FILES
 
-proj="project5.2"
+# # project 1.2
+# # -----------
+# proj="project1.2"
+# ver="v5"
+
+# project 2.2
+# -----------
+proj="project2.2"
 ver="v1"
 
 # files <- list.files(path="~/nlp-perinatal/data/rda/", 
@@ -155,8 +162,78 @@ note_status_tmp=note_status %>%
 
 note_status=note_status_tmp
 
+# # file name
+# file_name=paste0(teamtat_project,"_infantfeed_tidy")
+# now <- Sys.time()
+# file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+# 
+# # path name
+# data_directory=data_output_path 
+# data_path=paste0(data_directory,file_name_datestamp)
+# 
+# # export
+#   write_tsv(note_status, path=data_path, col_names=TRUE)
+                              
+# END CODE BLOCK
+                              
+```
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                INSTANCE                      *************** #
+# **************************************************************************** #
+
+# create empty list
+my_list <- list() 
+
+# identify "INSTANCE"
+instance_files= note_status %>%
+  filter(instance_count>1) %>%
+  select(teamtat_id) %>% pull()
+
+# path
+instance_data_input_path=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/",proj,"/",ver,"/rda/",instance_files,".rda")
+
+# extract annotations
+file_count=length(instance_data_input_path)
+
+# loop through annotations
+for(i in 1:file_count) {
+
+# loop through each annotation`
+file_index=instance_data_input_path[[i]]
+
+# import data
+load(file=file_index) 
+
+# teamtat-id and note-id
+feed_instance=note[[4]] %>%
+  filter(class=="FEED_INSTANCE")
+
+feed_instance$teamtat_id=note[[2]][1] %>% pull()
+feed_instance$note_id=note[[2]][2] %>% pull()
+feed_instance$teamtat_project=note[[2]][3] %>% pull()
+feed_instance$teamtat_version=note[[2]][4] %>% pull()
+feed_instance$run_date=note[[2]][5] %>% pull()
+
+feed_instance_final=feed_instance %>%
+  select(teamtat_id,note_id,teamtat_project,teamtat_version,run_date,everything())
+
+my_list[[i]] <- feed_instance_final
+
+}  # END FUNCTION
+
+# note and key files
+note_instance=bind_rows(my_list)
+
+# instance text
+# -------------
+note_instance_text=note_instance %>%
+  select(note_id,text)
+
 # file name
-file_name=paste0(teamtat_project,"_infantfeed_tidy")
+file_name=paste0(teamtat_project,"_infantfeed_instance_text")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
@@ -165,11 +242,29 @@ data_directory=data_output_path
 data_path=paste0(data_directory,file_name_datestamp)
 
 # export
-  write_tsv(note_status, path=data_path, col_names=TRUE)
+write_tsv(note_instance_text, path=data_path, col_names=TRUE)
+
+# instance class
+# -------------
+note_instance_class=note_instance %>%
+  select(teamtat_id,	note_id,	teamtat_project,	teamtat_version,	run_date,	annotate_id,	class,	identifier)
+
+# file name
+file_name=paste0(teamtat_project,"_infantfeed_instance_tidy")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+
+# path name
+data_directory=data_output_path 
+data_path=paste0(data_directory,file_name_datestamp)
+
+# export
+write_tsv(note_instance_class, path=data_path, col_names=TRUE)
                               
 # END CODE BLOCK
-                              
+
 ```
+
 
 ```{r, warning=FALSE, echo=FALSE}
 
