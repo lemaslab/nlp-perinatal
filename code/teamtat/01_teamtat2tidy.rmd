@@ -72,7 +72,7 @@ files <- list.files(path=data_input_path,
 
 
 data_output_path=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/",proj,"/",ver,"/tidy/")
-
+data_output_path_project=paste0("V:/FACULTY/DJLEMAS/NLP_Data/infantfeeding/annotations/tidy/")
 
 # create empty tibble() for data
 note_status <- tibble(
@@ -91,7 +91,7 @@ note_status <- tibble(
 ```{r, warning=FALSE, echo=FALSE}
 
 # **************************************************************************** #
-# ***************                CLASS                         *************** #
+# ***************                CLASS-STRUCTURED              *************** #
 # **************************************************************************** #
 
 # extract annotations
@@ -163,25 +163,110 @@ note_status_tmp=note_status %>%
 note_status=note_status_tmp
 
 # # file name
-# file_name=paste0(teamtat_project,"_infantfeed_tidy")
-# now <- Sys.time()
-# file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
-# 
-# # path name
-# data_directory=data_output_path 
-# data_path=paste0(data_directory,file_name_datestamp)
-# 
-# # export
-#   write_tsv(note_status, path=data_path, col_names=TRUE)
-                              
+file_name=paste0(teamtat_project,"_infantfeed_class_tidy")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+
+# export path- local
+data_directory=data_output_path
+data_path=paste0(data_directory,file_name_datestamp)
+write_tsv(note_status, path=data_path, col_names=TRUE)
+
+# export path- project
+data_directory=data_output_path_project
+data_path=paste0(data_directory,file_name_datestamp)
+write_tsv(note_status, path=data_path, col_names=TRUE)
+
 # END CODE BLOCK
                               
+```
+
+
+```{r, warning=FALSE, echo=FALSE}
+
+# **************************************************************************** #
+# ***************                CLASS-RAW TEXT                *************** #
+# **************************************************************************** #
+
+# extract annotations
+file_count=length(files)
+
+# create empty tibble() for data
+note_raw <- tibble(
+  note_id= character(),
+  note_text= character())
+
+# loop through annotations
+for(i in 1:file_count) {
+
+# loop through each annotation`
+file_index=files[[i]]
+
+# EXTRACT DATA FROM RDA
+
+# import data
+load(file=file_index) 
+
+# project-id
+teamtat_project=note[[2]][3] %>% pull()
+
+# note-id
+feed_notes=note[[4]] %>%
+  mutate(class=as.factor(class),
+         class_total=length(class))
+note_id=note[[2]][2]
+
+# note-text
+raw=note[[3]]
+
+# import to tibble
+note_raw[i,1]=note_id
+note_raw[i,2]=raw
+
+}  # END FUNCTION
+
+# EXPORT RAW TEXT
+#---------------
+# file name
+file_name=paste0(teamtat_project,"_infantfeed_class_text")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
+
+# path name- local
+data_directory=data_output_path 
+data_path_tsv=paste0(data_directory,file_name_datestamp)
+write_tsv(note_raw, path=data_path_tsv, col_names=TRUE)
+
+# path name- project
+data_directory=data_output_path_project 
+data_path_tsv=paste0(data_directory,file_name_datestamp)
+write_tsv(note_raw, path=data_path_tsv, col_names=TRUE)
+  
+# EXPORT RDA OBJECT
+#------------------
+# file name
+file_name=paste0(teamtat_project,"_infantfeed_class_tidytext")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
+
+# path name- local
+data_directory=data_output_path 
+data_path_rda=paste0(data_directory,file_name_datestamp)
+save(note_raw, file=data_path_rda)
+
+# path name- project
+data_directory=data_output_path_project 
+data_path_rda=paste0(data_directory,file_name_datestamp)
+save(note_raw, file=data_path_rda)
+  
+
+# END CODE BLOCK
 ```
 
 ```{r, warning=FALSE, echo=FALSE}
 
 # **************************************************************************** #
-# ***************                INSTANCE                      *************** #
+# ***************                INSTANCE-STRUCTURED/RAW       *************** #
 # **************************************************************************** #
 
 # create empty list
@@ -265,79 +350,4 @@ write_tsv(note_instance_class, path=data_path, col_names=TRUE)
 
 ```
 
-
-```{r, warning=FALSE, echo=FALSE}
-
-# **************************************************************************** #
-# ***************                RAW TEXT                      *************** #
-# **************************************************************************** #
-
-# extract annotations
-file_count=length(files)
-
-# create empty tibble() for data
-note_raw <- tibble(
-  note_id= character(),
-  note_text= character())
-
-# loop through annotations
-for(i in 1:file_count) {
-
-# loop through each annotation`
-file_index=files[[i]]
-
-# EXTRACT DATA FROM RDA
-
-# import data
-load(file=file_index) 
-
-# project-id
-teamtat_project=note[[2]][3] %>% pull()
-
-# note-id
-feed_notes=note[[4]] %>%
-  mutate(class=as.factor(class),
-         class_total=length(class))
-note_id=note[[2]][2]
-
-# note-text
-raw=note[[3]]
-
-# import to tibble
-note_raw[i,1]=note_id
-note_raw[i,2]=raw
-
-}  # END FUNCTION
-
-# EXPORT RAW TEXT
-#---------------
-# file name
-file_name=paste0(teamtat_project,"_infantfeed_text")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
-
-# path name
-data_directory=data_output_path 
-data_path_tsv=paste0(data_directory,file_name_datestamp)
-
-# export
-  write_tsv(note_raw, path=data_path_tsv, col_names=TRUE)
-  
-# EXPORT RDA OBJECT
-#------------------
-# file name
-file_name=paste0(teamtat_project,"_infantfeed_tidytext")
-now <- Sys.time()
-file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
-
-# path name
-data_directory=data_output_path 
-data_path_rda=paste0(data_directory,file_name_datestamp)
-
-# export
-save(note_raw, file=data_path_rda)
-  
-
-# END CODE BLOCK
-```
 
