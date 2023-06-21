@@ -47,15 +47,15 @@ library(stringr)
 
 # DIRECTORY WITH FILES
 
-# # project 1.2
-# # -----------
-# proj="project1.2"
-# ver="v5"
-
-# project 2.2
+# project 1.2
 # -----------
-proj="project2.2"
-ver="v1"
+proj="project1.2"
+ver="v5"
+
+# # project 2.2
+# # -----------
+# proj="project2.2"
+# ver="v1"
 
 # files <- list.files(path="~/nlp-perinatal/data/rda/", 
 #                     pattern=".rda", 
@@ -189,7 +189,7 @@ my_list <- list()
 
 # identify "INSTANCE"
 instance_files= note_status %>%
-  filter(instance_count>1) %>%
+  filter(instance_count>0) %>%
   select(teamtat_id) %>% pull()
 
 # path
