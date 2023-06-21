@@ -47,15 +47,15 @@ library(stringr)
 
 # DIRECTORY WITH FILES
 
-# project 1.2
-# -----------
-proj="project1.2"
-ver="v5"
-
-# # project 2.2
+# # project 1.2
 # # -----------
-# proj="project2.2"
-# ver="v1"
+# proj="project1.2"
+# ver="v5"
+
+# project 2.2
+# -----------
+proj="project2.2"
+ver="v1"
 
 # files <- list.files(path="~/nlp-perinatal/data/rda/", 
 #                     pattern=".rda", 
@@ -339,13 +339,33 @@ file_name=paste0(teamtat_project,"_infantfeed_instance_tidy")
 now <- Sys.time()
 file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.csv"))
 
-# path name
+# path name- local
 data_directory=data_output_path 
 data_path=paste0(data_directory,file_name_datestamp)
-
-# export
 write_tsv(note_instance_class, path=data_path, col_names=TRUE)
-                              
+
+# path name- project
+data_directory=data_output_path_project 
+data_path=paste0(data_directory,file_name_datestamp)
+write_tsv(note_instance_class, path=data_path, col_names=TRUE)
+
+# EXPORT RDA OBJECT
+#------------------
+# file name
+file_name=paste0(teamtat_project,"_infantfeed_instance_tidytext")
+now <- Sys.time()
+file_name_datestamp=paste0(file_name, format(now, "_%Y%m%d.rda"))
+
+# path name- local
+data_directory=data_output_path 
+data_path_rda=paste0(data_directory,file_name_datestamp)
+save(note_instance, file=data_path_rda)
+
+# path name- project
+data_directory=data_output_path_project 
+data_path_rda=paste0(data_directory,file_name_datestamp)
+save(note_instance, file=data_path_rda)
+  
 # END CODE BLOCK
 
 ```
